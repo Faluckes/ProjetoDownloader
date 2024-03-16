@@ -77,38 +77,26 @@ export default {
 
             //Criar o iframe com o vídeo do youtube baseado no videoID
             var iframe = document.createElement('iframe');
-            // iframe.width = '50%'; // Defina a largura desejada
-            // iframe.height = '360px'; // Defina a altura desejada
             iframe.style = "border-radius: 15px; border-style: none; box-shadow: 1px 1px 10px black; width: 50%; height: 480px"
             iframe.src = 'https://www.youtube.com/embed/' + videoID;
             iframe.allowfullscreen = false;
-
-
             document.getElementById('videoContainer').innerHTML = '';
             document.getElementById('videoContainer').appendChild(iframe);
-
-
-
         },
         baixarVideo() {
-
-
-
             var Url = document.getElementById('url').value;
             // eslint-disable-next-line no-useless-escape
             var regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
             var match = Url.match(regExp);
             if (match) {
                 var videoID = match[1];
-                //AIzaSyD8vz1ZnV-R_LEr7wHSlKRYNIcHlZwLSd0
-
-
-                //Configurar API para retornar algo
+                //Esse get da api/youtube/baixarvideo vai baixar o video no backend e voltar o video para o front
                 axios.get(`http://localhost:5070/api/youtube/baixarvideo?videoID=${videoID}&Url=${Url}`, { responseType: 'blob' })
                     .then(response => {
-
+                        //Aqui eu busco o titulo do video
                         this.buscarTitulo(Url)
                             .then(result => {
+                                //Aqui eu monto os bytes em video e envio para o usuario
                                 const url = window.URL.createObjectURL(new Blob([response.data]));
                                 const link = document.createElement('a');
                                 link.href = url;
@@ -116,9 +104,7 @@ export default {
                                 document.body.appendChild(link);
                                 link.click();
                                 link.remove();
-
                                 this.removerVideo();
-
                             })
                             .catch(error => {
                                 console.log(error);
@@ -126,23 +112,19 @@ export default {
                     })
                     .catch(error => console.error(error));
             }
-
-
-
         },
 
         async buscarTitulo(Url) {
             try {
                 const response = await axios.get(`http://localhost:5070/api/youtube/obtertitulo?Url=${Url}`);
                 const dados = response.data;
-
-
                 return dados;
             } catch (error) {
                 console.error('Erro:', error);
             }
         },
         removerVideo(){
+            //Aqui eu solicito que rode o metodo para remover o video na pasta do servidor, assim evitando deixar full o armazenamento
             axios.post(`http://localhost:5070/api/youtube/removervideo`)
         }
 
