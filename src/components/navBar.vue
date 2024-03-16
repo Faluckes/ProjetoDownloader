@@ -109,17 +109,19 @@ nav {
 .nav-list {
     list-style: none;
     display: flex;
+    background-color: #23232e;
 }
 
 .nav-list li {
     letter-spacing: 3px;
     margin-left: 32px;
-
+    background-color: #23232e;
 }
 
 .mobile-menu {
     display: none;
     cursor: pointer;
+    background-color: #23232e;
 }
 
 .mobile-menu div {

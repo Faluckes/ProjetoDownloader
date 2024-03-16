@@ -14,9 +14,13 @@
                     <button class="btn" v-show="show_Download" @click="baixarVideo">Download</button>
                 </div>
                 <p id="resultado"></p>
+                <div>
+                    <img id="loading" src="../assets/loading-gif.gif" alt="Loading..." width="32px" height="32px"
+                        style="display: none;">
+                </div>
             </div>
 
-            
+
 
             <div id="videoContainer">
 
@@ -85,6 +89,11 @@ export default {
         },
         baixarVideo() {
             var Url = document.getElementById('url').value;
+
+            document.getElementById('loading').style = "display:flex text-align: center";
+            document.getElementById('resultado').innerText = "Baixando...";
+
+
             // eslint-disable-next-line no-useless-escape
             var regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
             var match = Url.match(regExp);
@@ -105,12 +114,22 @@ export default {
                                 link.click();
                                 link.remove();
                                 this.removerVideo();
+                                document.getElementById('loading').style = "display:none;";
+                                document.getElementById('resultado').innerText = "Video baixado com sucesso";
+                                document.getElementById('resultado').style = "color:green; font-weight: 800";
+                                setTimeout(function () {
+                                    document.getElementById('resultado').innerText = "";
+                                }, 3000);
                             })
                             .catch(error => {
-                                console.log(error);
+                                document.getElementById('loading').style = "display:none;",
+                                    document.getElementById('resultado').innerText = "Download não foi possivel ser iniciado";
+                                document.getElementById('resultado').style = "color:green; font-weight: 800", setTimeout(function () {
+                                    document.getElementById('resultado').innerText = "";
+                                }, 3000);
                             });
                     })
-                    .catch(error => console.error(error));
+                    .catch(error => console.log(error));
             }
         },
 
@@ -123,7 +142,7 @@ export default {
                 console.error('Erro:', error);
             }
         },
-        removerVideo(){
+        removerVideo() {
             //Aqui eu solicito que rode o metodo para remover o video na pasta do servidor, assim evitando deixar full o armazenamento
             axios.post(`http://localhost:5070/api/youtube/removervideo`)
         }
@@ -141,8 +160,7 @@ export default {
 
 body {
     height: 100vh;
-    overflow: hidden;
-
+    overflow-y: hidden;
 }
 
 .container {
